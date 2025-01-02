@@ -25,4 +25,8 @@ public class Employee {
     @CreationTimestamp
     private LocalDate updateDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
 }
