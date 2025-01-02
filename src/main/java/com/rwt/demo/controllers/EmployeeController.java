@@ -1,5 +1,6 @@
 package com.rwt.demo.controllers;
 
+import com.rwt.demo.dto.ApiResponse;
 import com.rwt.demo.dto.EmployeeDto;
 import com.rwt.demo.services.EmployeeService;
 
@@ -9,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("*")
 @AllArgsConstructor
@@ -49,8 +52,14 @@ public class EmployeeController {
 
     // Build Delete Employee REST API
     @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long employeeId) {
+    public ResponseEntity<ApiResponse<Map<String, Long>>> deleteEmployee(@PathVariable("id") Long employeeId) {
         employeeService.deleteEmployee(employeeId);
-        return ResponseEntity.ok("Employee deleted successfully!.");
+        return ResponseEntity.ok(
+                ApiResponse.<Map<String, Long>>builder()
+                        .message("Employee deleted successfully!")
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.OK.value())
+                        .data(Map.of("employeeId", employeeId))
+                        .build());
     }
 }

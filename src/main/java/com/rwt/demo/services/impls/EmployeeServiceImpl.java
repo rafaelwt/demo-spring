@@ -11,9 +11,6 @@ import com.rwt.demo.services.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +27,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
 
         Department department = departmentRepository.findById(employeeDto.getDepartmentId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Department is not exists with id: " + employeeDto.getDepartmentId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Department is not exists with id: " + employeeDto.getDepartmentId()));
 
         employee.setDepartment(department);
 
@@ -42,8 +39,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto getEmployeeById(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Employee is not exists with given id : " + employeeId));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Employee is not exists with given id : " + employeeId));
 
         return EmployeeMapper.mapToEmployeeDto(employee);
     }
@@ -59,16 +56,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto updateEmployee(Long employeeId, EmployeeDto updatedEmployee) {
 
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-                () -> new ResourceNotFoundException("Employee is not exists with given id: " + employeeId)
-        );
-
+                () -> new ResourceNotFoundException("Employee is not exists with given id: " + employeeId));
+        employee.setName(updatedEmployee.getName());
         employee.setFirstName(updatedEmployee.getFirstName());
         employee.setLastName(updatedEmployee.getLastName());
         employee.setAddress(updatedEmployee.getAddress());
 
         Department department = departmentRepository.findById(updatedEmployee.getDepartmentId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Department is not exists with id: " + updatedEmployee.getDepartmentId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Department is not exists with id: " + updatedEmployee.getDepartmentId()));
 
         employee.setDepartment(department);
 
@@ -80,10 +76,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long employeeId) {
 
-        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
-                () -> new ResourceNotFoundException("Employee is not exists with given id: " + employeeId)
-        );
-
+        employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee is not exists with given id: " + employeeId));
         employeeRepository.deleteById(employeeId);
     }
 }

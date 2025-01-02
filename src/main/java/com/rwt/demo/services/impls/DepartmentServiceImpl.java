@@ -5,16 +5,19 @@ import com.rwt.demo.entities.Department;
 import com.rwt.demo.exeptions.ResourceNotFoundException;
 import com.rwt.demo.mappers.DepartmentMapper;
 import com.rwt.demo.repositories.DepartmentRepository;
+import com.rwt.demo.repositories.EmployeeRepository;
 import com.rwt.demo.services.DepartmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
     private DepartmentRepository departmentRepository;
+    private EmployeeRepository employeeRepository;
 
     @Override
     public DepartmentDto createDepartment(DepartmentDto departmentDto) {
@@ -26,8 +29,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentDto getDepartmentById(Long departmentId) {
         Department department = departmentRepository.findById(departmentId).orElseThrow(
-                () -> new ResourceNotFoundException("Department is not exists with a given id: " + departmentId)
-        );
+                () -> new ResourceNotFoundException("Department is not exists with a given id: " + departmentId));
         return DepartmentMapper.mapToDepartmentDto(department);
     }
 
@@ -42,8 +44,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentDto updateDepartment(Long departmentId, DepartmentDto updatedDepartment) {
 
         Department department = departmentRepository.findById(departmentId).orElseThrow(
-                () -> new ResourceNotFoundException("Department is not exists with a given id:"+ departmentId)
-        );
+                () -> new ResourceNotFoundException("Department is not exists with a given id:" + departmentId));
 
         department.setDepartmentName(updatedDepartment.getDepartmentName());
         department.setDepartmentDescription(updatedDepartment.getDepartmentDescription());
@@ -56,8 +57,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public void deleteDepartment(Long departmentId) {
         departmentRepository.findById(departmentId).orElseThrow(
-                () -> new ResourceNotFoundException("Department is not exists with a given id: " + departmentId)
-        );
+                () -> new ResourceNotFoundException("Department is not exists with a given id: " + departmentId));
+        // Verificar si hay empleados en este departamento
+        if (employeeRepository.existsByDepartmentId(departmentId)) {
+            throw new IllegalStateException("No se puede eliminar el departamento porque tiene empleados asociados");
+        }
 
         departmentRepository.deleteById(departmentId);
     }

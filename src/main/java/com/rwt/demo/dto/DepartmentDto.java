@@ -14,5 +14,6 @@ public class DepartmentDto {
     private Long id;
     @NotBlank(message = "El nombre del departamento no puede estar vacío")
     private String departmentName;
+    @NotBlank(message = "La descripción del departamento no puede estar vacía")
     private String departmentDescription;
 }

@@ -25,5 +25,18 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", new Date());
+        error.put("message", ex.getMessage());
+        error.put("path", request.getDescription(false));
+        error.put("status", HttpStatus.NOT_FOUND.value());
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    // TODO: Implementar el manejo de excepciones específicas , como cuando no se
+    // envia el body en la peticion
     // Manejador de excepciones específicas
 }
